@@ -41,4 +41,5 @@ int main(int argc, char *argv[])
 
     for (auto const &kv : filetype_counter)
         std::cout << kv.first << " " << kv.second << std::endl;
+    return 0;
 }

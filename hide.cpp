@@ -21,4 +21,5 @@ int main(int argc, char *argv[])
     fs::permissions(hide_path, fs::perms::group_read, fs::perm_options::remove);
     fs::permissions(hide_path, fs::perms::owner_read, fs::perm_options::remove);
     fs::permissions(hide_path, fs::perms::others_read, fs::perm_options::remove);
+    return 0;
 }
