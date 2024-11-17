@@ -85,6 +85,7 @@ void stash(std::string file_name)
     {
         stash_bite = random_generator();
     }
+    
     fs.seekp(0, fs.beg);
     fs << stash_bite << buffer;
     fs.close();

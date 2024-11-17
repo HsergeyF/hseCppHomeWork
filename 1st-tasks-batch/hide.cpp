@@ -12,7 +12,8 @@ int main(int argc, char *argv[])
 
     std::string file_path = argv[1];
     std::string hide_path = "./blackbox/";
-    fs::create_directories(hide_path);
+    if (!fs::is_directory(hide_path))
+        fs::create_directories(hide_path);
 
     // default permissions at my local OSX machine: drwxr-xr-x
     fs::rename(file_path, hide_path + file_path);
