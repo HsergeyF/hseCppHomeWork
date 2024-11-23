@@ -1,4 +1,3 @@
-#pragma once
 #include <thread>
 #include "Client.cpp"
 #include "helpers.cpp"

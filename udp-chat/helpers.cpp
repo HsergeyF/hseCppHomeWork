@@ -1,4 +1,3 @@
-#pragma once
 #include <string>
 #include <getopt.h>
 #include <netinet/in.h>
