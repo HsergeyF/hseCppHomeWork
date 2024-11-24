@@ -10,18 +10,19 @@
 struct ClientSettings
 {
     struct sockaddr_in clientAddress;
-    struct sockaddr_in serverAddress;
-    const int bufferLength = MSG_SIZE;
+    struct sockaddr_in recieverAddress;
+    const int bufferLength = 1024;
 };
 
 class Client
 {
 private:
-    sockaddr_in clientAddress, serverAddress;
+    sockaddr_in clientAddress, recieverAddress;
     bool isRunning;
     int sockfd;
-    int serverSocket;
     const int bufferLength;
+    std::string userName;
+    void setUserName();
 
 public:
     Client(ClientSettings settings);
