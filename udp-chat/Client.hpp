@@ -5,24 +5,23 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <iostream>
-
-#define MSG_CONFIRM 0
+#include "helpers.hpp"
 
 struct ClientSettings
 {
-    struct sockaddr_in client_address;
-    struct sockaddr_in reciever_address;
-    const int buffer_length = 1024;
+    struct sockaddr_in clientAddress;
+    struct sockaddr_in recieverAddress;
+    const int bufferLength = 1024;
 };
 
 class Client
 {
 private:
-    sockaddr_in client_address, reciever_address;
-    bool is_running;
+    sockaddr_in clientAddress, recieverAddress;
+    bool isRunning;
     int sockfd;
-    const int buffer_length;
-    std::string user_name;
+    const int bufferLength;
+    std::string userName;
     void setUserName();
 
 public:

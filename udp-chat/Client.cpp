@@ -1,78 +1,58 @@
-#include "Client.hpp"
+#include "client.hpp"
 
-Client::Client(ClientSettings settings) : buffer_length(settings.buffer_length)
+Client::Client(ClientSettings settings) : bufferLength(settings.bufferLength)
 {
     setUserName();
 
-    client_address = settings.client_address;
+    clientAddress = settings.clientAddress;
 
-    reciever_address = settings.reciever_address;
+    recieverAddress = settings.recieverAddress;
 
-    if ((sockfd = socket(settings.client_address.sin_family, SOCK_DGRAM, 0)) < 0)
-    {
-        perror("Socket creation failed:");
-        exit(EXIT_FAILURE);
-    }
+    establishSocketConnection(sockfd, clientAddress, SOCK_DGRAM);
 
-    if (bind(sockfd, (const struct sockaddr *)&client_address, sizeof(client_address)) < 0)
-    {
-        perror("Binding failed:");
-        exit(EXIT_FAILURE);
-    }
-
-    is_running = true;
+    isRunning = true;
 };
 
 void Client::setUserName()
 {
     std::cout << "Type username: ";
-    getline(std::cin, user_name);
-    if (user_name.size() == 0)
-        user_name = "anon user";
+    getline(std::cin, userName);
+    if (userName.size() == 0)
+        userName = "anon user";
 }
 
 void Client::onWrite()
 {
     std::string message;
-    socklen_t len = sizeof reciever_address;
-    int num_of_bytes;
-    while (is_running)
+    socklen_t len = sizeof recieverAddress;
+
+    while (isRunning)
     {
         getline(std::cin, message);
-        message.insert(0, user_name + ": ");
-        num_of_bytes = sendto(sockfd, (const char *)message.data(), strlen(message.data()),
-                              MSG_CONFIRM, (const struct sockaddr *)&reciever_address,
-                              len);
-        if (num_of_bytes == -1)
-        {
-            perror("Sendto error:");
-            exit(EXIT_FAILURE);
-        }
+        message.insert(0, userName + ": ");
+        if (sendto(sockfd, (const char *)message.data(), strlen(message.data()),
+                   MSG_CONFIRM, (const struct sockaddr *)&recieverAddress,
+                   len) == -1)
+            handleException("Send to error:");
     };
 };
 
 void Client::onRecieve()
 {
-    int num_of_bytes;
-    char buffer[buffer_length];
-    socklen_t len = sizeof reciever_address;
-    while (is_running)
+    char buffer[bufferLength];
+    socklen_t len = sizeof recieverAddress;
+    while (isRunning)
     {
-        num_of_bytes = recvfrom(sockfd, (char *)buffer, buffer_length,
-                                MSG_WAITALL, (struct sockaddr *)&reciever_address,
-                                &len);
-        if (num_of_bytes == -1)
-        {
-            perror("Recievefrom error:");
-            exit(EXIT_FAILURE);
-        }
-        buffer[num_of_bytes] = '\0';
+        if (recvfrom(sockfd, (char *)buffer, bufferLength,
+                     MSG_WAITALL, (struct sockaddr *)&recieverAddress,
+                     &len) == -1)
+            handleException("Recievefrom error:");
         std::cout << buffer << std::endl;
     }
 };
 
 Client::~Client()
 {
-    is_running = false;
+    isRunning = false;
     close(sockfd);
 };
