@@ -15,7 +15,7 @@ Client::Client(ClientSettings settings) : bufferLength(settings.bufferLength)
 
 void Client::onWrite()
 {
-    std::string command;
+    std::string command{};
     while (isRunning)
     {
         getline(std::cin, command);

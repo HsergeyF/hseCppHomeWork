@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-Client::Client(ClientSettings settings) : bufferLength(settings.bufferLength)
+Client::Client(SharedClientSettings settings) : bufferLength(settings.bufferLength)
 {
     setUserName();
 
@@ -23,7 +23,7 @@ void Client::setUserName()
 
 void Client::onWrite()
 {
-    std::string message;
+    std::string message{};
     socklen_t len = sizeof recieverAddress;
 
     while (isRunning)
@@ -47,7 +47,7 @@ void Client::onRecieve()
                      MSG_WAITALL, (struct sockaddr *)&recieverAddress,
                      &len) == -1)
             handleException("Recievefrom error:");
-        std::cout << buffer << std::endl;
+        std::cout << buffer << '\n';
     }
 };
 

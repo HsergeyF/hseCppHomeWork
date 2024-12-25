@@ -7,13 +7,6 @@
 #include <iostream>
 #include "helpers.hpp"
 
-struct ClientSettings
-{
-    struct sockaddr_in clientAddress;
-    struct sockaddr_in recieverAddress;
-    const int bufferLength = 1024;
-};
-
 class Client
 {
 private:
@@ -25,7 +18,7 @@ private:
     void setUserName();
 
 public:
-    Client(ClientSettings settings);
+    Client(SharedClientSettings settings);
     virtual ~Client();
     void onWrite();
     void onRecieve();

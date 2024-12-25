@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     settings.serverAddress = getSocketAddress(std::atoi(argv[1]));
     settings.clientAddress = getSocketAddress(std::atoi(argv[2]));
 
+    // TODO: pass settings by pointer
     auto client = Client(settings);
     auto connectionThread = std::thread(&Client::onWrite, client);
     auto listenThread = std::thread(&Client::onRecieve, client);

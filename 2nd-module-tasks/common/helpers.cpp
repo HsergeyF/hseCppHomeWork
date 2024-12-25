@@ -1,6 +1,6 @@
 #include "helpers.hpp"
 
-struct sockaddr_in getSocketAddress(int port)
+struct sockaddr_in getSocketAddress(const int port)
 {
     struct sockaddr_in address;
     memset(&address, 0, sizeof(address));
@@ -12,13 +12,14 @@ struct sockaddr_in getSocketAddress(int port)
     return address;
 };
 
-void handleException(std::string message)
+void handleException(const std::string message)
 {
     perror(message.c_str());
     exit(EXIT_FAILURE);
 };
 
-void establishSocketConnection(int &sockfd, struct sockaddr_in address, int streamType)
+// TODO: const struct *
+void establishSocketConnection(int &sockfd, struct sockaddr_in address, const int streamType)
 {
     if ((sockfd = socket(address.sin_family, streamType, 0)) < 0)
         handleException("Socket creation failed:");
@@ -27,14 +28,15 @@ void establishSocketConnection(int &sockfd, struct sockaddr_in address, int stre
         handleException("Binding failed:");
 }
 
-UDPChatInputArguments getInputArgs(int argc, char *argv[])
+PortsInputArguments getInputArgs(int argc, char *argv[])
 {
+
     option longopts[] = {
         {"client", required_argument, NULL, 'c'},
         {"reciever", required_argument, NULL, 'r'},
         {0}};
 
-    UDPChatInputArguments arguments{};
+    PortsInputArguments arguments{};
     int opt;
     while ((opt = getopt(argc, argv, "c:r:")) != -1)
     {
@@ -48,5 +50,32 @@ UDPChatInputArguments getInputArgs(int argc, char *argv[])
             break;
         }
     }
+
+    assert(((void)"Please provide client and reciever ports as args",
+            &arguments.clientPort != NULL || &arguments.recieverPort != NULL));
+
     return arguments;
+}
+
+std::string findKeyboardDeviceNumber()
+{
+    const std::string cmd =
+        "grep -E 'Handlers|EV=' /proc/bus/input/devices |"
+        "grep -B1 'EV=120013' |"
+        "grep -Eo 'event[0-9]+' |"
+        "grep -Eo '[0-9]+' |"
+        "tr -d '\n'";
+    FILE *pipe = popen(cmd.c_str(), "r");
+    char buffer[128];
+    std::string result = "";
+    while (!feof(pipe))
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    pclose(pipe);
+    return result;
+}
+
+std::string getInputDevicePath()
+{
+    return "/dev/input/event" + findKeyboardDeviceNumber();
 }

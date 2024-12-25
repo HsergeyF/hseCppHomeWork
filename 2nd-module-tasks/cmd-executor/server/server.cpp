@@ -1,6 +1,7 @@
 #include "server.hpp"
 
-namespace bp = boost::process;
+// TODO: specify what boost methods will be used
+// TODO: make method args const where needed
 
 Server::Server(ServerSettings settings) : bufferLength(settings.bufferLength)
 {
@@ -14,9 +15,9 @@ Server::Server(ServerSettings settings) : bufferLength(settings.bufferLength)
     isRunning = true;
 };
 
-void Server::handleConnection(int socket)
+void Server::handleConnection(const int socket)
 {
-    std::cout << "New connection established" << std::endl;
+    std::cout << "New connection established" << '\n';
 
     char command[bufferLength];
     memset(&command, 0, bufferLength);
@@ -27,21 +28,22 @@ void Server::handleConnection(int socket)
     }
 }
 
-void Server::writeToSocket(int socket, std::string message)
+void Server::writeToSocket(const int socket, const std::string message)
 {
     if (write(socket, message.c_str(), sizeof(message)) == -1)
         handleException("Writing to socket failed:");
 }
 
-ExecutionResponse Server::execute(char *command, int socket)
+ExecutionResponse Server::execute(const char *command, const int socket)
 {
-    std::string execOutput;
-    bp::ipstream output;
-    bp::ipstream errorOutput;
+    std::string execOutput{};
+    boost::process::ipstream output;
+    boost::process::ipstream errorOutput;
 
     try
     {
-        bp::child process(command, bp::std_out > output, bp::std_err > errorOutput);
+        boost::process::child process(command, boost::process::std_out > output,
+                                      boost::process::std_err > errorOutput);
 
         std::string execMessage = "Execution code: " + std::to_string(process.exit_code()) + "\n";
 
@@ -72,8 +74,8 @@ void Server::onResponse(sockaddr_in recieverAddress, std::string message)
 
 void Server::onNewConnection()
 {
-    int clientSocket;
-    socklen_t clientLen;
+    int clientSocket{};
+    socklen_t clientLen{};
     while (isRunning)
     {
         clientSocket = accept(sockfd, (struct sockaddr *)&serverAddress, &clientLen);
@@ -84,6 +86,7 @@ void Server::onNewConnection()
 
 Server::~Server()
 {
+    // TODO: check for automatically closable socket
     isRunning = false;
     close(sockfd);
 };

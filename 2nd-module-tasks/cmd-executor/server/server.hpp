@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include <iostream>
 #include <thread>
-#include <boost/algorithm/string.hpp>
 #include "boost/process.hpp"
 #include "helpers.hpp"
 
