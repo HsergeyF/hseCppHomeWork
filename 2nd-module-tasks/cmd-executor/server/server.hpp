@@ -29,7 +29,7 @@ private:
     bool isRunning;
     int sockfd;
     const int bufferLength;
-    ExecutionResponse execute(char *command, int socket);
+    ExecutionResponse execute(char const *command, int socket);
     void handleConnection(int socket);
     void writeToSocket(int socket, std::string message);
 

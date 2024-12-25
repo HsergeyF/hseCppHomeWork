@@ -4,7 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-
     PortsInputArguments args = getInputArgs(argc, argv);
 
     SharedClientSettings settings = {
