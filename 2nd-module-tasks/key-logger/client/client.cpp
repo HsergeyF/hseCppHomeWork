@@ -1,6 +1,7 @@
 #include "client.hpp"
 #include <linux/input.h>
 
+// mapped from: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/input-event-codes.h
 const char *keycodes[] = {
     "RESERVED",
     "ESC",
@@ -97,8 +98,9 @@ void Client::run()
     while (isRunning)
     {
         read(fd, &ev, sizeof(ev));
+        // Отпускание клавиши - событие со значением, равным 0
         if ((ev.type == EV_KEY) && (ev.value == 0))
-            keycodes[ev.code].size() if (write(sockfd, keycodes[ev.code], 1) == -1)
+            if (write(sockfd, keycodes[ev.code], sizeof(keycodes[ev.code])) == -1)
                 handleException("Writing failed:");
     };
 };
